@@ -7,28 +7,37 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.Card
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -36,13 +45,6 @@ import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import androidx.camera.core.ExperimentalGetImage
-import androidx.compose.foundation.Canvas
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 
 class MainActivity : ComponentActivity() {
 
@@ -82,7 +84,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalGetImage::class)
 @Composable
 fun CameraOcrScreen() {
     val context = LocalContext.current
@@ -131,7 +132,6 @@ fun CameraOcrScreen() {
                         } catch (e: Exception) {
                             recognizedText = "Błąd uruchamiania kamery: ${e.message}"
                         }
-
                     }, ContextCompat.getMainExecutor(ctx))
 
                     previewView
@@ -155,8 +155,11 @@ fun CameraOcrScreen() {
                 capture.takePicture(
                     ContextCompat.getMainExecutor(context),
                     object : ImageCapture.OnImageCapturedCallback() {
+
+                        @ExperimentalGetImage
                         override fun onCaptureSuccess(imageProxy: androidx.camera.core.ImageProxy) {
                             val mediaImage = imageProxy.image
+
                             if (mediaImage != null) {
                                 val image = InputImage.fromMediaImage(
                                     mediaImage,
@@ -201,6 +204,7 @@ fun CameraOcrScreen() {
         ) {
             Text(if (isScanning) "SCANNING..." else "SCAN DOCUMENT")
         }
+
         Spacer(modifier = Modifier.size(12.dp))
 
         Card(
