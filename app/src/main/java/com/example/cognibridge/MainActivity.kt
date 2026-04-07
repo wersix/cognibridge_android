@@ -201,7 +201,6 @@ fun CameraOcrScreen() {
         ) {
             Text(if (isScanning) "SCANNING..." else "SCAN DOCUMENT")
         }
- sxaxa
         Spacer(modifier = Modifier.size(12.dp))
 
         Card(
